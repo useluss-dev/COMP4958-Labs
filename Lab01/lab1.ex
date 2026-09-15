@@ -26,11 +26,15 @@ defmodule Lab1 do
   # Part 2
   defp pow_mod(_a, m, n, acc) when m == 0, do: rem(acc, n)
 
-  defp pow_mod(a, m, n, acc) do
-    pow_mod(a, m - 1, n, rem(acc * a, n))
+  defp pow_mod(a, m, n, acc) when m > 0 do
+    if rem(m, 2) != 0 do
+      pow_mod(rem(a * a, n), div(m, 2), n, rem(acc * a, n))
+    else
+      pow_mod(rem(a * a, n), div(m, 2), n, acc)
+    end
   end
 
   def pow_mod(a, m, n) do
-    pow_mod(a, m, n, 1)
+    pow_mod(rem(a, n), m, n, 1)
   end
 end
