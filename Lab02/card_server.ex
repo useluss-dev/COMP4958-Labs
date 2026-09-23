@@ -5,7 +5,7 @@ defmodule CardServer do
 
   defp new() do
     values =
-      Enum.to_list(2..10, fn x -> Integer.to_string(x) end) ++ ["J", "Q", "K", "A"]
+      Enum.map(2..10, fn x -> Integer.to_string(x) end) ++ ["J", "Q", "K", "A"]
 
     suits = ["\u2663", "\u2666", "\u2665", "\u2660"]
     for v <- values, s <- suits, do: v <> s
