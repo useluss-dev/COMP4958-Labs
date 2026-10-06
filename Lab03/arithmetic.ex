@@ -6,11 +6,13 @@ defmodule Arithmetic.Server do
   end
 
   def square(x) do
-    GenServer.call(__MODULE__, {:square, x})
+    worker = GenServer.call(__MODULE__, :next_worker)
+    Arithmetic.Worker.square(worker, x)
   end
 
   def sqrt(x) do
-    GenServer.call(__MODULE__, {:sqrt, x})
+    worker = GenServer.call(__MODULE__, :next_worker)
+    Arithmetic.Worker.sqrt(worker, x)
   end
 
   # Implementation
@@ -22,42 +24,16 @@ defmodule Arithmetic.Server do
         pid
       end)
 
-    print_workers(workers)
+    Enum.each(workers, &IO.inspect/1)
 
     {:ok, %{workers: workers, next_index: 0, count: n}}
   end
 
   @impl true
-  def handle_call({operation, x}, from, state)
-      when operation in [:square, :sqrt] do
-    {worker, next_index} = get_next_worker(state)
-
-    # Do not block the GenServer callback.
-    spawn(fn ->
-      result =
-        case operation do
-          :square -> Arithmetic.Worker.square(worker, x)
-          :sqrt -> Arithmetic.Worker.sqrt(worker, x)
-        end
-
-      # Reply to the process that called GenServer.call/2.
-      GenServer.reply(from, result)
-    end)
-
-    {:noreply, %{state | next_index: next_index}}
-  end
-
-  # Helpers
-  defp print_workers(workers) do
-    Enum.each(workers, fn pid ->
-      IO.puts("#{inspect(pid)}")
-    end)
-  end
-
-  defp get_next_worker(state) do
+  def handle_call(:next_worker, _from, state) do
     worker = Enum.at(state.workers, state.next_index)
     next_index = rem(state.next_index + 1, state.count)
-    {worker, next_index}
+    {:reply, worker, %{state | next_index: next_index}}
   end
 end
 
