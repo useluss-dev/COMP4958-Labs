@@ -1,0 +1,15 @@
+- use Process.exit(pid, reason) to send an exit signal
+- a process can choose to trap exit signals or not (by calling 
+  Process.flag(:trap_exit, true/false)
+  * a process that does NOT trap exit signals dies when it receives an
+    exit signal (with reason) other than :normal
+  * a process that traps exit signals doesn't die when it receives an
+    exit signal unless that signal is :kill 
+  * hence, the :kill signal can be used to unconditionally kill a process
+- processes can be linked
+  * when a process dies, the reason it dies (its exit reason) is sent in an
+    exit signal to processes linked to it 
+  * when a process dies due to an exit signal, its exit reason is the same
+    as that of the signal, unless that signal is :kill in which case the
+    exit reason becomes :killed
+

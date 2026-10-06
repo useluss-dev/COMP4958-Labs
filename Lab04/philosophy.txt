@@ -1,0 +1,11 @@
+Erlang philosophy for building fault-tolerant software:
+- Let some other process fix the error
+- Let it crash: in the event of an error, the program should just crash.
+
+• exceptions occur when the run-time system does not know what to do.
+• errors occur when the programmer doesn’t know what to do.
+
+Build applications in 2 parts:
+- part that solves the problem (with as little defensive code as possible)
+- part that corrects errors if they occur (generally generic that can be
+  used for many different apps)
